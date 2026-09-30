@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Open in Obsidian</title>
+<style>
+  :root { color-scheme: light dark; --bg:#f6f5f8; --fg:#1f1d26; --muted:#6b6878; --accent:#7c3aed; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#16151b; --fg:#ecebf2; --muted:#9d9aab; --accent:#a78bfa; } }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; background:var(--bg); color:var(--fg);
+         font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding:24px; box-sizing:border-box; }
+  main { max-width:32rem; text-align:center; }
+  h1 { font-size:1.25rem; margin:0 0 .5rem; overflow-wrap:anywhere; }
+  p { color:var(--muted); margin:.25rem 0 1.25rem; }
+  a.btn { display:inline-block; background:var(--accent); color:#fff; text-decoration:none; padding:.65rem 1.2rem;
+          border-radius:.5rem; font-weight:600; }
+  a.btn:focus-visible { outline:3px solid var(--fg); outline-offset:2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title">Opening your task in Obsidian…</h1>
+  <p id="hint">If nothing happens, use the button. Obsidian must be installed on this device.</p>
+  <a class="btn" id="open" href="#">Open in Obsidian</a>
+</main>
+<script>
+  // The task path is in the URL fragment (after #), which browsers never send to this server.
+  // Example: …/obsidian-open/#vault=Personal%20Knowledge%20Management&file=TaskNotes%2FTasks%2FMy%20task
+  (function () {
+    var frag = location.hash.replace(/^#/, "");
+    var params = new URLSearchParams(frag);
+    var btn = document.getElementById("open");
+    if (!params.get("vault") || !params.get("file")) {
+      document.getElementById("title").textContent = "No task in this link";
+      document.getElementById("hint").textContent = "The link is missing its vault or file part.";
+      btn.hidden = true;
+      return;
+    }
+    var name = params.get("file").split("/").pop();
+    document.getElementById("title").textContent = name;
+    document.title = name + " · Obsidian";
+    var target = "obsidian://open?" + frag;
+    btn.href = target;
+    location.replace(target);
+  })();
+</script>
+</body>
+</html>
